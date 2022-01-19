@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import androidx.lifecycle.lifecycleScope
 
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -13,13 +14,19 @@ import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import com.example.googlemapsdemo.databinding.ActivityMapsBinding
+import com.example.googlemapsdemo.misc.CameraAndViewport
+import com.example.googlemapsdemo.misc.TypeAndStyle
 import com.google.android.gms.maps.model.MapStyleOptions
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import java.lang.Exception
 
 class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
     private lateinit var map: GoogleMap
     private lateinit var binding: ActivityMapsBinding
+    private val typeAndStyle by lazy { TypeAndStyle() }
+    private val cameraAndViewport by lazy { CameraAndViewport() }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,23 +46,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
-            R.id.normal_map -> {
-                map.mapType = GoogleMap.MAP_TYPE_NORMAL
-            }
-            R.id.hybrid_map -> {
-                map.mapType = GoogleMap.MAP_TYPE_HYBRID
-            }
-            R.id.satellite_map -> {
-                map.mapType = GoogleMap.MAP_TYPE_SATELLITE
-            }
-            R.id.terrain_map -> {
-                map.mapType = GoogleMap.MAP_TYPE_TERRAIN
-            }
-            R.id.none_map -> {
-                map.mapType = GoogleMap.MAP_TYPE_NONE
-            }
-        }
+        typeAndStyle.setMapType(item, map)
         return true
     }
 
@@ -63,27 +54,19 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         map = googleMap
 
         val losAngeles = LatLng(34.05139603923977, -118.2934366445839)
+        val newYork = LatLng(40.75525227312982, -74.01902321542899)
         map.addMarker(MarkerOptions().position(losAngeles).title("Marker in Los Angeles"))
         map.moveCamera(CameraUpdateFactory.newLatLngZoom(losAngeles, 10f))
+//        map.moveCamera(CameraUpdateFactory.newCameraPosition(cameraAndViewport.losAngeles))
         map.uiSettings.apply {
             isZoomControlsEnabled = true
         }
-        setMapStyle(map)
-    }
+        typeAndStyle.setMapStyle(map, this)
 
-    private fun setMapStyle(googleMap: GoogleMap) {
-        try {
-            val success = googleMap.setMapStyle(
-                MapStyleOptions.loadRawResourceStyle(
-                    this,
-                    R.raw.style
-                )
-            )
-            if (!success) {
-                Log.d("Maps", "Failed to add Style")
-            }
-        } catch (e: Exception) {
-            Log.d("Maps", e.toString())
+        lifecycleScope.launch {
+            delay(4000L)
+            map.moveCamera(CameraUpdateFactory.scrollBy(-200f, 100f))
         }
     }
+
 }
