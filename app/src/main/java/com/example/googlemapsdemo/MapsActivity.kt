@@ -41,8 +41,11 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         map = googleMap
 
         // Add a marker in Sydney and move the camera
-        val sydney = LatLng(-34.0, 151.0)
-        map.addMarker(MarkerOptions().position(sydney).title("Marker in Sydney"))
-        map.moveCamera(CameraUpdateFactory.newLatLng(sydney))
+        val losAngeles = LatLng(34.05139603923977, -118.2934366445839)
+        map.addMarker(MarkerOptions().position(losAngeles).title("Marker in Los Angeles"))
+        map.moveCamera(CameraUpdateFactory.newLatLngZoom(losAngeles, 10f))
+        map.uiSettings.apply {
+            isZoomControlsEnabled = true
+        }
     }
 }
