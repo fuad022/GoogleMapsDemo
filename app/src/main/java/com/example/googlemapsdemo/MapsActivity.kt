@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.Toast
 import androidx.lifecycle.lifecycleScope
 
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -53,19 +54,44 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     override fun onMapReady(googleMap: GoogleMap) {
         map = googleMap
 
-        val losAngeles = LatLng(34.05139603923977, -118.2934366445839)
+        val losAngeles = LatLng(34.04692123923977, -118.2474842145839)
         val newYork = LatLng(40.75525227312982, -74.01902321542899)
         map.addMarker(MarkerOptions().position(losAngeles).title("Marker in Los Angeles"))
         map.moveCamera(CameraUpdateFactory.newLatLngZoom(losAngeles, 10f))
-//        map.moveCamera(CameraUpdateFactory.newCameraPosition(cameraAndViewport.losAngeles))
         map.uiSettings.apply {
             isZoomControlsEnabled = true
         }
         typeAndStyle.setMapStyle(map, this)
 
-        lifecycleScope.launch {
-            delay(4000L)
-            map.moveCamera(CameraUpdateFactory.scrollBy(-200f, 100f))
+//        lifecycleScope.launch {
+//            delay(4000L)
+//
+////            map.animateCamera(CameraUpdateFactory.newCameraPosition(cameraAndViewport.losAngeles), 2000, object : GoogleMap.CancelableCallback {
+////                override fun onFinish() {
+////                    Toast.makeText(this@MapsActivity, "Finished", Toast.LENGTH_SHORT).show()
+////                }
+////
+////                override fun onCancel() {
+////                    Toast.makeText(this@MapsActivity, "Canceled", Toast.LENGTH_SHORT).show()
+////                }
+////            })
+//////            map.animateCamera(CameraUpdateFactory.newLatLngBounds(cameraAndViewport.melbourneBounds, 100), 2000, null)
+//////            map.setLatLngBoundsForCameraTarget(cameraAndViewport.melbourneBounds)
+//        }
+
+        onMapClicked()
+        onMapLongClicked()
+    }
+
+    private fun onMapClicked() {
+        map.setOnMapClickListener {
+            Toast.makeText(this, "Single Click", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun onMapLongClicked() {
+        map.setOnMapLongClickListener {
+            map.addMarker(MarkerOptions().position(it).title("New Marker"))
         }
     }
 
