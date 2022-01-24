@@ -20,6 +20,7 @@ import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.example.googlemapsdemo.databinding.ActivityMapsBinding
 import com.example.googlemapsdemo.misc.CameraAndViewport
+import com.example.googlemapsdemo.misc.CustomInfoAdapter
 import com.example.googlemapsdemo.misc.TypeAndStyle
 import com.google.android.gms.maps.model.*
 import kotlinx.coroutines.delay
@@ -59,22 +60,20 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         map = googleMap
 
         val losAngeles = LatLng(34.04692123923977, -118.2474842145839)
-        val losAngeles2 = LatLng(34.125037184403574, -118.38286807004069)
         val newYork = LatLng(40.75525227312982, -74.01902321542899)
         val losAngelesMarker =
             map.addMarker(MarkerOptions()
                 .position(losAngeles)
-                .title("Marker in Los Angeles"))
-        val losAngelesMarker2 =
-            map.addMarker(MarkerOptions()
-                .position(losAngeles2)
                 .title("Marker in Los Angeles")
-                .zIndex(1f))
+                .snippet("Some random text"))
 
         map.moveCamera(CameraUpdateFactory.newLatLngZoom(losAngeles, 10f))
         map.uiSettings.apply {
             isZoomControlsEnabled = true
         }
+
+        map.setInfoWindowAdapter(CustomInfoAdapter(this))
+
         typeAndStyle.setMapStyle(map, this)
 
 //        lifecycleScope.launch {
