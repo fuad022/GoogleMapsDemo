@@ -21,6 +21,7 @@ import com.google.android.gms.maps.SupportMapFragment
 import com.example.googlemapsdemo.databinding.ActivityMapsBinding
 import com.example.googlemapsdemo.misc.CameraAndViewport
 import com.example.googlemapsdemo.misc.CustomInfoAdapter
+import com.example.googlemapsdemo.misc.Shapes
 import com.example.googlemapsdemo.misc.TypeAndStyle
 import com.google.android.gms.maps.model.*
 import kotlinx.coroutines.delay
@@ -30,9 +31,11 @@ import java.lang.Exception
 class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
     private lateinit var map: GoogleMap
+    private val losAngeles = LatLng(34.04692123923977, -118.2474842145839)
     private lateinit var binding: ActivityMapsBinding
     private val typeAndStyle by lazy { TypeAndStyle() }
     private val cameraAndViewport by lazy { CameraAndViewport() }
+    private val shapes by lazy { Shapes() }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -59,8 +62,6 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     override fun onMapReady(googleMap: GoogleMap) {
         map = googleMap
 
-        val losAngeles = LatLng(34.04692123923977, -118.2474842145839)
-        val newYork = LatLng(40.75525227312982, -74.01902321542899)
         val losAngelesMarker =
             map.addMarker(MarkerOptions()
                 .position(losAngeles)
@@ -72,13 +73,12 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
             isZoomControlsEnabled = true
         }
 
-        map.setInfoWindowAdapter(CustomInfoAdapter(this))
-
         typeAndStyle.setMapStyle(map, this)
 
-//        lifecycleScope.launch {
-//            delay(4000L)
-//        }
+        shapes.addPolygon(map)
+
+        lifecycleScope.launch {
+        }
     }
 
 
