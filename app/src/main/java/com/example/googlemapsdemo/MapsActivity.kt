@@ -19,10 +19,7 @@ import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.example.googlemapsdemo.databinding.ActivityMapsBinding
-import com.example.googlemapsdemo.misc.CameraAndViewport
-import com.example.googlemapsdemo.misc.CustomInfoAdapter
-import com.example.googlemapsdemo.misc.Shapes
-import com.example.googlemapsdemo.misc.TypeAndStyle
+import com.example.googlemapsdemo.misc.*
 import com.google.android.gms.maps.model.*
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -36,6 +33,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     private val typeAndStyle by lazy { TypeAndStyle() }
     private val cameraAndViewport by lazy { CameraAndViewport() }
     private val shapes by lazy { Shapes() }
+    private val overlays by lazy { Overlays() }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -75,8 +73,12 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
         typeAndStyle.setMapStyle(map, this)
 
+        val groundOverlay = overlays.addGroundOverlayWithTag(map)
+
         lifecycleScope.launch {
-            shapes.addPolyline(map)
+            delay(4000L)
+            groundOverlay?.tag
+            Log.d("Maps", groundOverlay?.tag.toString())
         }
     }
 
