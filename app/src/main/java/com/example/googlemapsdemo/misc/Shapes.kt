@@ -3,9 +3,7 @@ package com.example.googlemapsdemo.misc
 import android.graphics.Color
 import com.example.googlemapsdemo.R
 import com.google.android.gms.maps.GoogleMap
-import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.PolygonOptions
-import com.google.android.gms.maps.model.PolylineOptions
+import com.google.android.gms.maps.model.*
 import kotlinx.coroutines.delay
 
 class Shapes {
@@ -25,24 +23,25 @@ class Shapes {
     private val p02 = LatLng(33.23707099789062, -118.05091514033636)
     private val p03 = LatLng(33.80888822068028, -118.82665068663746)
 
-    private suspend fun addPolyline(map: GoogleMap) {
+    suspend fun addPolyline(map: GoogleMap) {
+
+//        val pattern = listOf(Dot(), Gap(30f))
+
         val polyline = map.addPolyline(
             PolylineOptions().apply {
                 add(losAngeles, newYork, madrid)
-                width(5f)
+                width(120f)
                 color(Color.BLUE)
                 geodesic(true)
-                clickable(true)
+                jointType(JointType.ROUND)
+                startCap(CustomCap(BitmapDescriptorFactory.fromResource(R.drawable.custom_marker), 100f))
+                endCap(ButtCap())
             }
         )
 
-        delay(5000)
+        delay(5000L)
 
-        val newList = listOf(
-            losAngeles, panama, madrid
-        )
-
-        polyline.points = newList
+        polyline.points = listOf(losAngeles, panama, madrid)
     }
 
     fun addPolygon(map: GoogleMap) {
@@ -52,15 +51,21 @@ class Shapes {
                 fillColor(R.color.black)
                 strokeColor(R.color.black)
                 zIndex(1f)
+                addHole(listOf(p00, p01, p02, p03))
             }
         )
-        val polygon2 = map.addPolygon(
-            PolygonOptions().apply {
-                add(p00, p01, p02, p03)
-                fillColor(R.color.black)
-                strokeColor(R.color.black)
+    }
+
+    fun addCircle(map: GoogleMap) {
+        val circle = map.addCircle(
+            CircleOptions().apply {
+                center(losAngeles)
+                radius(50000.0)
+                fillColor(R.color.purple_500)
+                strokeColor(R.color.purple_500)
             }
         )
+
     }
 
 }

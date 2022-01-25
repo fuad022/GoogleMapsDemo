@@ -75,9 +75,8 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
         typeAndStyle.setMapStyle(map, this)
 
-        shapes.addPolygon(map)
-
         lifecycleScope.launch {
+            shapes.addPolyline(map)
         }
     }
 
