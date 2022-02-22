@@ -26,6 +26,7 @@ import com.google.android.gms.maps.SupportMapFragment
 import com.example.googlemapsdemo.databinding.ActivityMapsBinding
 import com.example.googlemapsdemo.misc.*
 import com.google.android.gms.maps.model.*
+import com.google.maps.android.data.geojson.GeoJsonLayer
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.lang.Exception
@@ -80,8 +81,26 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
         typeAndStyle.setMapStyle(map, this)
 
-        checkLocationPermission()
+        //checkLocationPermission()
 
+        val layer = GeoJsonLayer(map, R.raw.map, this)
+        layer.addLayerToMap()
+
+        val polygonStyle = layer.defaultPolygonStyle
+        polygonStyle.apply {
+//            fillColor = ContextCompat.getColor(this@MapsActivity, R.color.purple_200)
+            fillColor = Color.BLUE
+        }
+
+        layer.setOnFeatureClickListener {
+            Log.d("MapsActivity", "Feature ${it.getProperty("country")}")
+        }
+
+        for (feature in layer.features) {
+            if (feature.hasProperty("country")) {
+                Log.d("MapsActivity", "Success")
+            }
+        }
     }
 
     private fun checkLocationPermission() {
