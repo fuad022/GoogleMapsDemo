@@ -28,6 +28,8 @@ import com.example.googlemapsdemo.misc.*
 import com.google.android.gms.maps.model.*
 import com.google.maps.android.clustering.ClusterManager
 import com.google.maps.android.data.geojson.GeoJsonLayer
+import com.google.maps.android.heatmaps.Gradient
+import com.google.maps.android.heatmaps.HeatmapTileProvider
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.lang.Exception
@@ -42,7 +44,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     private val shapes by lazy { Shapes() }
     private val overlays by lazy { Overlays() }
 
-    private lateinit var clusterManager: ClusterManager<MyItem>
+//    private lateinit var clusterManager: ClusterManager<MyItem>
 
     private val locationList = listOf(
         LatLng(33.987459169366, -117.435146669222),
@@ -57,6 +59,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         LatLng(32.503644946358, -106.822353687115)
     )
 
+    /*
     private val titleList = listOf(
         "1",
         "2",
@@ -81,7 +84,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         "Lorem Ipsum",
         "Lorem Ipsum",
         "Lorem Ipsum"
-    )
+    )*/
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -123,10 +126,13 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
         typeAndStyle.setMapStyle(map, this)
 
+        addHeatMap()
+
+        /*
         clusterManager = ClusterManager(this, map)
         map.setOnCameraIdleListener(clusterManager)
         map.setOnMarkerClickListener(clusterManager)
-        addMarkers()
+        addMarkers()*/
 
         //checkLocationPermission()
 
@@ -150,6 +156,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 //        }
     }
 
+    /*
     private fun addMarkers() {
         locationList.zip(titleList).zip(snippetList).forEach { pair ->
             val myItem =
@@ -157,8 +164,9 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
                 MyItem(pair.first.first, "Title: ${pair.first.second}", "Snippet: ${pair.second}")
             clusterManager.addItem(myItem)
         }
-    }
+    }*/
 
+    /*
     private fun checkLocationPermission() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
             == PackageManager.PERMISSION_GRANTED) {
@@ -191,6 +199,33 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
             map.isMyLocationEnabled = true
         } else {
             Toast.makeText(this, "We need your permission", Toast.LENGTH_SHORT).show()
+        }
+    }*/
+
+    private fun addHeatMap() {
+
+        val colors = intArrayOf(
+            Color.rgb(0, 128, 255), // Blue
+            Color.rgb(204, 0, 204), // Pink
+            Color.rgb(255, 255, 51) // Yellow
+        )
+
+        val startPoints = floatArrayOf(0.2f, 0.5f, 0.8f)
+        val gradient = Gradient(colors, startPoints)
+
+        val provider = HeatmapTileProvider.Builder()
+            .data(locationList)
+            //.radius(50)
+            .gradient(gradient)
+            .opacity(0.30)
+            .build()
+        val overlay = map.addTileOverlay(TileOverlayOptions().tileProvider(provider))
+
+        lifecycleScope.launch {
+            delay(5000)
+            overlay?.clearTileCache()
+//            provider.setRadius(50)
+            overlay?.remove()
         }
     }
 
